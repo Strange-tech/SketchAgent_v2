@@ -10,6 +10,7 @@ import os
 import numpy as np
 from PIL import Image
 from skimage.color import rgb2hsv
+from skimage.measure import label
 from skimage.morphology import remove_small_objects, binary_opening, rectangle
 
 
@@ -37,6 +38,42 @@ def segment(img_path, s_min=0.25, v_lo=0.10, v_hi=0.70,
     foliage = remove_small_objects(foliage, min_size=min_area)
     trunk = remove_small_objects(trunk, min_size=min_area)
     return foliage, trunk
+
+
+def refine_trunk_mask(image, trunk_mask, tree_mask=None, color_tol=50.0, sat_margin=0.10):
+    """Grow a coarse trunk mask into connected pixels of similar color.
+
+    Samples the trunk's representative color and saturation from `trunk_mask`, then
+    adds the connected components of similarly-colored, low-saturation pixels that
+    touch the trunk seed. The saturation cap keeps the growth on the (desaturated)
+    trunk/branches and away from saturated foliage. `tree_mask` bounds the growth to
+    the tree region. The seed is never removed, so the result is a superset of
+    `trunk_mask`.
+    """
+    img = np.array(image).astype(np.float32)
+    mask = np.asarray(trunk_mask, dtype=bool)
+    if not mask.any():
+        return mask
+
+    trunk_color = np.median(img[mask], axis=0)  # representative trunk color
+    dist = np.sqrt(((img - trunk_color) ** 2).sum(axis=2))
+
+    # low-saturation constraint: grown pixels may be only slightly more saturated
+    # than the trunk (trunk/bark is desaturated; foliage is saturated).
+    sat = rgb2hsv(img / 255.0)[..., 1]
+    sat_cap = float(np.percentile(sat[mask], 90)) + sat_margin
+
+    similar = (dist <= color_tol) & (sat <= sat_cap)
+
+    labels, _ = label(similar, connectivity=2, return_num=True)
+    seed_ids = np.unique(labels[mask])
+    seed_ids = seed_ids[seed_ids != 0]
+    refined = mask | np.isin(labels, seed_ids)  # grow, never shrink
+
+    if tree_mask is not None:
+        refined = refined & np.asarray(tree_mask, dtype=bool)
+
+    return refined
 
 
 def main():

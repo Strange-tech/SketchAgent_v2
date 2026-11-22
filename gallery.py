@@ -39,7 +39,7 @@ HEADER = """<!doctype html>
 </head>
 <body>
   <h1>SketchAgent Tree Gallery</h1>
-  <p class="sub">Blue = contour outline, orange = Canny edges, brown = trunk. Each tree replays stroke-by-stroke.</p>
+  <p class="sub">Blue = contour outline, orange = Canny edges. Each tree replays stroke-by-stroke.</p>
   <div class="grid">
 """
 
@@ -62,14 +62,14 @@ FOOTER = """  </div>
 
     function buildSchedule() {
       schedule = [];
-      groups.forEach(function(g, gi) {
-        var gp = Array.prototype.slice.call(g.querySelectorAll('path'));
-        var delay = gi * perStroke;
-        gp.forEach(function(p) {
-          schedule.push({el: p, delay: delay, dur: perStroke, len: +p.dataset.len});
+      var pi = 0;
+      groups.forEach(function(g) {
+        g.querySelectorAll('path').forEach(function(p) {
+          schedule.push({el: p, delay: pi * perStroke, dur: perStroke, len: +p.dataset.len});
+          pi++;
         });
       });
-      totalDur = groups.length * perStroke;
+      totalDur = pi * perStroke;
     }
 
     function apply(t) {

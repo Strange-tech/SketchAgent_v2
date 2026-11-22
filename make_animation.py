@@ -88,14 +88,14 @@ HTML = """<!doctype html>
     }});
     function buildSchedule() {{
       schedule = [];
+      var pi = 0;
       groups.forEach(function(g, gi) {{
-        var gp = Array.prototype.slice.call(g.querySelectorAll('path'));
-        var delay = gi * perStroke / speed;
-        gp.forEach(function(p) {{
-          schedule.push({{ el: p, delay: delay, dur: perStroke / speed, len: +p.dataset.len }});
+        g.querySelectorAll('path').forEach(function(p) {{
+          schedule.push({{ el: p, delay: pi * perStroke / speed, dur: perStroke / speed, len: +p.dataset.len, stroke: gi }});
+          pi++;
         }});
       }});
-      totalDur = groups.length * perStroke / speed;
+      totalDur = pi * perStroke / speed;
     }}
     function apply(t) {{
       schedule.forEach(function(s) {{
@@ -103,8 +103,11 @@ HTML = """<!doctype html>
         s.el.style.strokeDashoffset = s.len * (1 - f);
       }});
       paths.forEach(function(p){{ p.style.stroke = p.dataset.color; }});
-      var idx = Math.floor(t / (perStroke / speed));
-      curEl.textContent = String(Math.min(groups.length, idx + 1));
+      var cur = 0;
+      for (var i = 0; i < schedule.length; i++) {{
+        if (t >= schedule[i].delay) cur = schedule[i].stroke;
+      }}
+      curEl.textContent = String(Math.min(groups.length, cur + 1));
       progEl.style.width = (Math.min(1, t / totalDur) * 100).toFixed(1) + '%';
     }}
     function play() {{

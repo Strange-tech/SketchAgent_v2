@@ -13,6 +13,7 @@ import os
 
 import numpy as np
 from PIL import Image, ImageOps
+from scipy.ndimage import binary_fill_holes
 from skimage.feature import canny
 from skimage.morphology import skeletonize, binary_dilation, disk
 from skimage.measure import approximate_polygon, find_contours, label, regionprops
@@ -220,6 +221,7 @@ def compute_mask(gray):
 
 def extract_contour_strokes(mask, simplify_tol, parts=8, corner_angle=45.0):
     """Outer boundary of the silhouette, split into open arcs."""
+    mask = binary_fill_holes(mask)  # ignore inner holes -> only the outermost boundary
     contours = find_contours(mask.astype(float), 0.5)
     if not contours:
         return []
