@@ -1,0 +1,10 @@
+.env
+.venv/
+results/
+__pycache__/
+sam3/
+sketchagent.pdf
+test_input_triangle.png
+input/
+.DS_Store
+*.pyc

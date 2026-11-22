@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>Tree, stroke by stroke</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600&family=Inter:wght@400;500;600&display=swap">
+<style>
+  :root {
+    --bg: #f3f0e8;
+    --surface: #ffffff;
+    --surface-2: #e8e3d8;
+    --ink: #1c1a16;
+    --muted: #6f6a5f;
+    --accent: #2f5d8a;
+    --paper: #ffffff;
+    --line: #17130e;
+    --display: "Space Grotesk", system-ui, sans-serif;
+    --body: "Inter", system-ui, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #151412;
+      --surface: #201e1b;
+      --surface-2: #2c2a26;
+      --ink: #ece7de;
+      --muted: #9b968a;
+      --accent: #7fa8cc;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #151412;
+    --surface: #201e1b;
+    --surface-2: #2c2a26;
+    --ink: #ece7de;
+    --muted: #9b968a;
+    --accent: #7fa8cc;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--body);
+    padding: 28px max(16px, env(safe-area-inset-right, 0px)) 44px max(16px, env(safe-area-inset-left, 0px));
+  }
+  .wrap { max-width: 680px; margin: 0 auto; }
+  header { display: flex; flex-direction: column; gap: 6px; margin-bottom: 20px; }
+  .eyebrow { font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+  h1 { font-family: var(--display); font-size: clamp(24px, 4vw, 34px); margin: 0; font-weight: 600; letter-spacing: -.01em; text-wrap: balance; }
+  .sub { color: var(--muted); max-width: 54ch; margin: 2px 0 0; line-height: 1.5; }
+  .stage {
+    background: var(--surface);
+    border: 1px solid var(--surface-2);
+    border-radius: 14px;
+    padding: 18px;
+    display: grid;
+    place-items: center;
+  }
+  .paper {
+    background: var(--paper);
+    border-radius: 4px;
+    box-shadow: 0 1px 2px rgba(0,0,0,.05), 0 10px 28px rgba(0,0,0,.08);
+    width: 100%;
+    max-width: 500px;
+    aspect-ratio: 1;
+  }
+  svg { display: block; width: 100%; height: 100%; }
+  svg path { stroke: var(--line); stroke-width: 7; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .controls {
+    margin-top: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  #replay {
+    font-family: var(--body);
+    font-weight: 600;
+    font-size: 14px;
+    color: #fff;
+    background: var(--accent);
+    border: 0;
+    border-radius: 999px;
+    padding: 10px 22px;
+    cursor: pointer;
+  }
+  #replay:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  #pause {
+    font-family: var(--body);
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--ink);
+    background: var(--surface);
+    border: 1px solid var(--surface-2);
+    border-radius: 999px;
+    padding: 10px 22px;
+    cursor: pointer;
+  }
+  #pause:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .seg { display: inline-flex; border: 1px solid var(--surface-2); border-radius: 999px; overflow: hidden; background: var(--surface); }
+  .seg button { background: transparent; color: var(--ink); border: 0; border-radius: 0; padding: 8px 14px; font-family: var(--body); font-size: 13px; cursor: pointer; }
+  .seg button[aria-pressed="true"] { background: var(--surface-2); }
+  .readout { margin-left: auto; font-variant-numeric: tabular-nums; color: var(--muted); font-size: 14px; white-space: nowrap; }
+  .readout b { color: var(--ink); }
+  .bar { height: 4px; background: var(--surface-2); border-radius: 999px; margin-top: 12px; overflow: hidden; }
+  .bar > div { height: 100%; width: 0; background: var(--accent); border-radius: 999px; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="eyebrow">SketchAgent &middot; sequential sketch</div>
+      <h1>Tree, stroke by stroke</h1>
+      <p class="sub">42 strokes drawn in order, outline first. The blue stroke is the one being drawn right now.</p>
+    </header>
+
+    <div class="stage">
+      <div class="paper">
+        <svg viewBox="0 0 612 612" preserveAspectRatio="xMidYMid meet" aria-label="Tree sketch being drawn">
+<g id="s1" stroke="black" stroke-width="7.0" fill="none" stroke-linecap="round">
+<path d="M 305.37 593.94 C 348.00909959487973 508.84852137914356 252.92291179112058 360.6538234814947 199.92844032401578 362.9058961598749 "/>
+<path d="M 199.93 362.91 C 139.31833169438497 355.7592099756355 231.61433896565237 326.84302566135057 174.23012900240946 329.91271359534517 "/>
+</g>
+<g id="s2" stroke="black" stroke-width="7.0" fill="none" stroke-linecap="round">
+<path d="M 172.55 330.05 C 163.94927645461263 311.14219408429653 142.58968345396076 319.4659827657168 130.00553376373398 284.4928345696763 "/>
+<path d="M 130.01 284.49 C 110.45626148159747 293.80404500524327 154.60757203528493 216.83314940277685 116.84328655747727 275.88604509745466 "/>
+</g>
+<g id="s3" stroke="black" stroke-width="7.0" fill="none" stroke-linecap="round">
+<path d="M 123.96 271.67 C 39.949834496353816 289.59716617695926 152.23549541099248 217.08629150408612 100.94858296109162 242.74498395592911 "/>
+<path d="M 100.95 242.74 C 115.300397941463 201.36073667457907 22.529409741397636 229.67945186958528 59.74085783362011 199.3208970051985 "/>
+</g>
+<g id="s4" stroke="black" stroke-width="7.0" fill="none" stroke-linecap="round">
+<path d="M 69.56 198.90 C 79.3814734664972 111.44586129208275 144.87364720081692 210.12151980656608 136.3733750710402 149.7904668379963 "/>
+<path d="M 136.37 149.79 C 67.06871916334258 175.0239876986607 87.30189256607456 108.25023770341578 141.38653275886068 120.13885563769384 "/>
+</g>
+<g id="s5" stroke="black" stroke-width="7.0" fill="none" stroke-linecap="round">
+<path d="M 134.29 115.04 C 51.48744237262116 98.1749503130076 233.81334579589284 111.76233126760266 116.40095282190966 91.94534368085947 "/>
+<path d="M 116.40 91.95 C 98.25693142688476 100.30710599335147 110.26836719350912 57.89318142297987 110.96113006412966 66.79292797642923 "/>
+</g>
+<g id="s6" stroke="black" stroke-width="7.0" fill="none" stroke-linecap="round">
+<path d="M 112.41 60.11 C 122.14488935470814 79.5533322123012 201.94148466274103 79.35175656368057 220.20035372288595 38.21445549483598 "/>
+<path d="M 220.20 38.21 C 213.0712027863143 22.869939490127727 251.72950085530488 45.63773944881002 258.9534689929551 46.85343686422315 "/>
+</g>
+<g id="s7" stroke="black" stroke-width="7.0" fill="none" stroke-linecap="round">
+<path d="M 261.04 45.67 C 283.71665779176317 49.24573453455576 338.02600673638153 18.257136722987184 348.0977140900564 17.701612395489636 "/>
+<path d="M 348.10 17.70 C 312.7013104950189 40.1073263927216 346.67836973223046 46.49369370229657 378.5760975310167 45.325534024303984 "/>
+</g>
+<g id="s8" stroke="black" stroke-width="7.0" fill="none" stroke-linecap="round">
+<path d="M 380.47 46.77 C 399.64438364680973 75.24638382820223 419.1506157453142 19.67637109114382 417.5104121305546 79.5588172979786 "/>
+<path d="M 417.51 79.56 C 386.2133428870279 118.87695138904587 526.5192235209823 45.81249548543675 460.5626316221495 107.62942317824701 "/>
+</g>
+<g id="s9" stroke="black" stroke-width="7.0" fill="none" stroke-linecap="round">
+<path d="M 476.34 100.84 C 496.9761175484284 118.48278058485616 575.5678938520697 118.59723196598975 524.9935054967592 139.99992285427786 "/>
+<path d="M 524.99 140.00 C 448.0820638609937 165.518671869346 619.8512128736409 154.38749825794525 521.4979127202034 162.41447914752612 "/>
+</g>
+<g id="s10" stroke="black" stroke-width="7.0" fill="none" stroke-linecap="round">
+<path d="M 522.96 165.72 C 546.6169187677506 178.4510965253093 517.7785627993583 204.1303382658647 497.8786646370679 230.19965326018058 "/>
+<path d="M 497.88 230.20 C 556.1433388688234 232.0668204051858 570.2309825612082 260.91663269245885 491.09406204407225 266.00317276925307 "/>
+</g>
+<g id="s11" stroke="black" stroke-width="7.0" fill="none" stroke-linecap="round">
+<path d="M 503.78 268.25 C 522.4736379495436 302.9113627395372 384.47876793838213 304.508474540522 434.4953774956163 317.0721845701671 "/>
+<path d="M 434.50 317.07 C 481.1493162693399 345.7729119852458 380.01299567087045 320.5510534204625 439.6259551585211 342.45581487420225 "/>
+</g>
+<g id="s12" stroke="black" stroke-width="7.0" fill="none" stroke-linecap="round">
+<path d="M 442.37 337.50 C 472.8207102374132 397.76521404061157 418.1320307589022 365.430752367144 391.9056465860386 350.653017702697 "/>
+<path d="M 391.91 350.65 C 349.8151292525853 353.49285841811604 294.0206907289702 537.7000377184263 318.0446071577385 597.9160501315373 "/>
+</g>
+<g id="s13" stroke="black" stroke-width="7.0" fill="none" stroke-linecap="round">
+<path d="M 306.00 594.00 C 326.0426353239424 512.6420354548493 294.51957479906656 452.5369156652659 245.9999999999999 377.9999999999998 "/>
+</g>
+<g id="s14" stroke="black" stroke-width="7.0" fill="none" stroke-linecap="round">
+<path d="M 354.00 378.00 C 294.9939344106017 452.4099496321729 320.0329257829251 533.6652366652359 329.9999999999998 593.9999999999997 "/>
+</g>
+<g id="s15" stroke="black" stroke-width="7.0" fill="none" stroke-linecap="round">
+<path d="M 378.40 17.56 C 324.28376523497434 -19.616931363443143 326.15221430252234 56.22853702339167 283.00646159364504 41.17128935106369 "/>
+</g>
+<g id="s16" stroke="black" stroke-width="7.0" fill="none" stroke-linecap="round">
+<path d="M 246.00 6.00 Q 226.03646563814874 6.000000000000002 209.99999999999994 5.999999999999998 "/>
+</g>
+<g id="s17" stroke="black" stroke-width="7.0" fill="none" stroke-linecap="round">
+<path d="M 270.00 402.00 C 297.92826778123185 390.5990285450156 333.791376415532 468.12756219357846 306.00000000000006 474.0000000000001 "/>
+</g>
+<g id="s18" stroke="black" stroke-width="7.0" fill="none" stroke-linecap="round">
+<path d="M 306 474 L 270 402 "/>
+</g>
+<g id="s19" stroke="black" stroke-width="7.0" fill="none" stroke-linecap="round">
+<path d="M 318 426 L 342 366 "/>
+</g>
+<g id="s20" stroke="black" stroke-width="7.0" fill="none" stroke-linecap="round">
+<path d="M 342.00 366.00 C 348.06647116324564 389.08689612594594 296.56695992179857 401.3696558110818 318.00000000000017 426.0000000000002 "/>
+</g>
+<g id="s21" stroke="black" stroke-width="7.0" fill="none" stroke-linecap="round">
+<path d="M 438.00 378.00 C 409.05721644852144 369.7133870177353 393.7213284915145 335.2013068162135 353.99999999999994 366.00000000000006 "/>
+</g>
+<g id="s22" stroke="black" stroke-width="7.0" fill="none" stroke-linecap="round">
+<path d="M 462 366 L 438 366 "/>
+</g>
+<g id="s23" stroke="black" stroke-width="7.0" fill="none" stroke-linecap="round">
+<path d="M 366.00 318.00 Q 352.0676328502414 331.93236714975825 341.99999999999994 341.9999999999998 "/>
+</g>
+<g id="s24" stroke="black" stroke-width="7.0" fill="none" stroke-linecap="round">
+<path d="M 258 270 L 222 282 "/>
+</g>
+<g id="s25" stroke="black" stroke-width="7.0" fill="none" stroke-linecap="round">
+<path d="M 222 234 L 186 210 "/>
+</g>
+<g id="s26" stroke="black" stroke-width="7.0" fill="none" stroke-linecap="round">
+<path d="M 246.98 172.77 C 212.83466608419906 140.19855765027373 168.8569517479335 233.27086397018957 162.1219556792157 161.84738447266218 "/>
+</g>
+<g id="s27" stroke="black" stroke-width="7.0" fill="none" stroke-linecap="round">
+<path d="M 282.00 198.00 C 270.7752167752165 171.99342199342186 340.4432744432746 200.60145860145866 317.99999999999983 173.9999999999998 "/>
+</g>
+<g id="s28" stroke="black" stroke-width="7.0" fill="none" stroke-linecap="round">
+<path d="M 282.00 150.00 Q 265.96353436185115 149.99999999999994 245.9999999999998 149.99999999999991 "/>
+</g>
+<g id="s29" stroke="black" stroke-width="7.0" fill="none" stroke-linecap="round">
+<path d="M 150.00 138.00 Q 163.2380952380951 152.33333333333314 186.00000000000003 149.99999999999997 "/>
+</g>
+<g id="s30" stroke="black" stroke-width="7.0" fill="none" stroke-linecap="round">
+<path d="M 162.00 102.00 C 158.27222993946245 83.84795321637424 111.09039460822146 91.54385964912287 101.99999999999996 89.99999999999997 "/>
+</g>
+<g id="s31" stroke="black" stroke-width="7.0" fill="none" stroke-linecap="round">
+<path d="M 78.00 186.00 Q 67.79220779220779 200.92207792207802 42.000000000000014 210.00000000000009 "/>
+</g>
+<g id="s32" stroke="black" stroke-width="7.0" fill="none" stroke-linecap="round">
+<path d="M 114.00 162.00 Q 92.89040545965476 162.0 66.00000000000003 162.00000000000009 "/>
+</g>
+<g id="s33" stroke="black" stroke-width="7.0" fill="none" stroke-linecap="round">
+<path d="M 222.00 66.00 Q 237.91666666666657 62.625 258.00000000000017 78.00000000000004 "/>
+</g>
+<g id="s34" stroke="black" stroke-width="7.0" fill="none" stroke-linecap="round">
+<path d="M 150.00 66.00 C 177.13959274838126 66.00000000000009 180.97481446028556 65.99999999999993 198.0 65.99999999999999 "/>
+</g>
+<g id="s35" stroke="black" stroke-width="7.0" fill="none" stroke-linecap="round">
+<path d="M 450.00 294.00 Q 486.59340659340637 297.23076923076917 510.0000000000002 282.0000000000001 "/>
+</g>
+<g id="s36" stroke="black" stroke-width="7.0" fill="none" stroke-linecap="round">
+<path d="M 498.00 222.00 C 502.7756410256419 247.14743589743625 541.1383547008544 220.75908119658098 557.9999999999997 245.9999999999998 "/>
+</g>
+<g id="s37" stroke="black" stroke-width="7.0" fill="none" stroke-linecap="round">
+<path d="M 534.00 270.00 Q 525.1787439613522 245.84541062801924 497.9999999999998 270.0 "/>
+</g>
+<g id="s38" stroke="black" stroke-width="7.0" fill="none" stroke-linecap="round">
+<path d="M 498.00 150.00 Q 521.0396158463388 132.23529411764713 546.0000000000001 138.0 "/>
+</g>
+<g id="s39" stroke="black" stroke-width="7.0" fill="none" stroke-linecap="round">
+<path d="M 486.00 102.00 Q 471.56536502546714 102.00000000000003 449.9999999999998 101.99999999999999 "/>
+</g>
+<g id="s40" stroke="black" stroke-width="7.0" fill="none" stroke-linecap="round">
+<path d="M 438.00 78.00 C 419.81717529662785 63.18692469377396 482.72261432992025 45.845119309350686 474.0000000000002 54.00000000000003 "/>
+</g>
+<g id="s41" stroke="black" stroke-width="7.0" fill="none" stroke-linecap="round">
+<path d="M 462.00 78.00 Q 436.0000000000004 76.00000000000006 425.99999999999994 89.99999999999997 "/>
+</g>
+<g id="s42" stroke="black" stroke-width="7.0" fill="none" stroke-linecap="round">
+<path d="M 474.00 66.00 Q 444.00000000000057 60.00000000000006 438.00000000000017 78.00000000000001 "/>
+</g>
+        </svg>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button id="replay">Replay</button>
+      <button id="pause">Pause</button>
+      <div class="seg" role="group" aria-label="drawing speed">
+        <button data-speed="0.5" aria-pressed="false">0.5&times;</button>
+        <button data-speed="1" aria-pressed="true">1&times;</button>
+        <button data-speed="2" aria-pressed="false">2&times;</button>
+      </div>
+      <div class="readout">stroke <b id="cur">0</b> / <b id="total">0</b></div>
+    </div>
+    <div class="bar"><div id="prog"></div></div>
+  </div>
+
+  <script>
+    var groups = Array.prototype.slice.call(document.querySelectorAll('svg g'));
+    var paths = Array.prototype.slice.call(document.querySelectorAll('svg g path'));
+    var perStroke = 420; // ms per stroke at 1x
+    var speed = 1;
+    var playing = false;
+    var paused = false;
+    var schedule = [];
+    var elapsed = 0, totalDur = 0, lastTick = 0, rafId = null;
+
+    var curEl = document.getElementById('cur');
+    var progEl = document.getElementById('prog');
+    var pauseBtn = document.getElementById('pause');
+    document.getElementById('total').textContent = groups.length;
+
+    paths.forEach(function(p) {
+      var L = p.getTotalLength();
+      p.dataset.len = L;
+      p.style.strokeDasharray = L;
+      p.style.strokeDashoffset = L;
+    });
+
+    function buildSchedule() {
+      schedule = [];
+      groups.forEach(function(g, gi) {
+        var gp = Array.prototype.slice.call(g.querySelectorAll('path'));
+        var delay = gi * perStroke / speed;
+        gp.forEach(function(p) {
+          schedule.push({ el: p, delay: delay, dur: perStroke / speed, len: +p.dataset.len });
+        });
+      });
+      totalDur = groups.length * perStroke / speed;
+    }
+
+    function apply(t) {
+      schedule.forEach(function(s) {
+        var f = Math.max(0, Math.min(1, (t - s.delay) / s.dur));
+        s.el.style.strokeDashoffset = s.len * (1 - f);
+      });
+      paths.forEach(function(p){ p.style.stroke = 'var(--line)'; });
+      var idx = Math.floor(t / (perStroke / speed));
+      if (t < totalDur && idx >= 0 && idx < groups.length) {
+        groups[idx].querySelectorAll('path').forEach(function(p){ p.style.stroke = 'var(--accent)'; });
+      }
+      curEl.textContent = String(Math.min(groups.length, idx + 1));
+      progEl.style.width = (Math.min(1, t / totalDur) * 100).toFixed(1) + '%';
+    }
+
+    function play() {
+      elapsed = 0;
+      buildSchedule();
+      apply(0);
+      playing = true;
+      paused = false;
+      pauseBtn.textContent = 'Pause';
+      lastTick = performance.now();
+      rafId = requestAnimationFrame(tick);
+    }
+
+    function tick(now) {
+      if (!playing) return;
+      elapsed += now - lastTick;
+      lastTick = now;
+      if (elapsed >= totalDur) {
+        elapsed = totalDur;
+        apply(elapsed);
+        playing = false;
+        paused = false;
+        pauseBtn.textContent = 'Pause';
+        return;
+      }
+      apply(elapsed);
+      rafId = requestAnimationFrame(tick);
+    }
+
+    function togglePause() {
+      if (paused) {
+        paused = false;
+        playing = true;
+        lastTick = performance.now();
+        pauseBtn.textContent = 'Pause';
+        rafId = requestAnimationFrame(tick);
+      } else if (playing) {
+        paused = true;
+        playing = false;
+        if (rafId) cancelAnimationFrame(rafId);
+        pauseBtn.textContent = 'Resume';
+      }
+    }
+
+    document.getElementById('replay').addEventListener('click', play);
+    pauseBtn.addEventListener('click', togglePause);
+    Array.prototype.slice.call(document.querySelectorAll('.seg button')).forEach(function(b) {
+      b.addEventListener('click', function() {
+        speed = +b.dataset.speed;
+        document.querySelectorAll('.seg button').forEach(function(x){ x.setAttribute('aria-pressed', String(x === b)); });
+        play();
+      });
+    });
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      buildSchedule();
+      apply(totalDur);
+      pauseBtn.textContent = 'Pause';
+      pauseBtn.disabled = true;
+    } else {
+      play();
+    }
+  </script>
+</body>
+</html>
