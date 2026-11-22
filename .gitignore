@@ -8,3 +8,14 @@ test_input_triangle.png
 input/
 .DS_Store
 *.pyc
+
+# Development scratch scripts (not used by main/gallery pipeline)
+/combine_strokes.py
+/extract_part_strokes.py
+/naturalize.py
+/order_strokes.py
+/render_strokes.py
+/stroke_ordering.py
+/test_thresholds.py
+/plan.md
+/sketch_animation.html

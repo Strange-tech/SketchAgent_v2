@@ -1,17 +1,25 @@
 """Reorder strokes into a human-like drawing order (pixel coordinates).
 
 Coordinates: x is left-to-right, y is top-to-bottom, so "bottom" means a LARGER
-y value. Ordering key: part (0=trunk before 1=foliage), layer (0=outline before
-1=detail), then bottom-to-top, then left-to-right. Each stroke is also oriented
-bottom-to-top (left-to-right for horizontal strokes).
+y value. Ordering key (most significant first):
+  1. length: long strokes before short strokes
+  2. bottom-to-top: lower strokes before higher strokes
+  3. left-to-right: left strokes before right strokes
+
+Each stroke is also oriented bottom-to-top (left-to-right for horizontal strokes),
+so the pen moves the way a human would.
 """
 import json
 
 
-def _bottom_anchor(points):
-    """(y, x) of the bottom-most point: largest y, tie-break smallest x (left)."""
-    x, y = max(points, key=lambda p: (p[1], -p[0]))
-    return y, x
+def _stroke_length(points):
+    """Total polyline length (sum of segment distances) in pixels."""
+    if len(points) < 2:
+        return 0.0
+    total = 0.0
+    for (x0, y0), (x1, y1) in zip(points, points[1:]):
+        total += ((x1 - x0) ** 2 + (y1 - y0) ** 2) ** 0.5
+    return total
 
 
 def _fix_direction(stroke):
@@ -36,18 +44,18 @@ class OrderStrokesTool:
         return {
             "name": "order_strokes",
             "description": (
-                "Reorder strokes into a human-like drawing order: part (0=trunk "
-                "before 1=foliage), then layer (0=outline before 1=detail), then "
-                "bottom-to-top, then left-to-right. Coordinates are pixels (x "
-                "left-to-right, y top-to-bottom; bottom = larger y). Each stroke is "
-                "also oriented bottom-to-top (left-to-right for horizontal strokes)."
+                "Reorder strokes into a human-like drawing order: longest strokes "
+                "first, then bottom-to-top, then left-to-right. Coordinates are "
+                "pixels (x left-to-right, y top-to-bottom; bottom = larger y). Each "
+                "stroke is also oriented bottom-to-top (left-to-right for horizontal "
+                "strokes)."
             ),
             "parameters": {
                 "type": "object",
                 "properties": {
                     "strokes": {
                         "type": "array",
-                        "description": "List of strokes; each is an object {points, part, layer}.",
+                        "description": "List of strokes; each is an object {points}.",
                         "items": {
                             "type": "object",
                             "properties": {
@@ -60,8 +68,6 @@ class OrderStrokesTool:
                                         "maxItems": 2,
                                     },
                                 },
-                                "part": {"type": "integer", "description": "0=trunk, 1=foliage"},
-                                "layer": {"type": "integer", "description": "0=outline, 1=detail"},
                             },
                             "required": ["points"],
                         },
@@ -83,9 +89,13 @@ class OrderStrokesTool:
 
         keyed = []
         for s in strokes:
-            ay, ax = _bottom_anchor(s["points"])
-            keyed.append((s.get("part", 0), s.get("layer", 0), -ay, ax, s))
-        keyed.sort(key=lambda k: (k[0], k[1], k[2], k[3]))
+            pts = s["points"]
+            length = _stroke_length(pts)
+            bottom_y = max(p[1] for p in pts)
+            left_x = min(p[0] for p in pts)
+            # sort ascending on (-length, -bottom_y, left_x) == long, bottom, left first
+            keyed.append((-length, -bottom_y, left_x, s))
+        keyed.sort(key=lambda k: (k[0], k[1], k[2]))
 
-        ordered = [_fix_direction(k[4]) for k in keyed]
+        ordered = [_fix_direction(k[3]) for k in keyed]
         return json.dumps({"ordered": ordered}, indent=2)
